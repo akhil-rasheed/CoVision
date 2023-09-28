@@ -1,11 +1,4 @@
-import {
-  IonButton,
-  IonCard,
-  IonCardContent,
-  IonContent,
-  IonPage,
-  IonText,
-} from '@ionic/react';
+import { IonButton, IonCard, IonCardContent, IonContent, IonPage, IonText } from '@ionic/react';
 import { useEffect, useRef } from 'react';
 import Webcam from 'react-webcam';
 import CovCamera from '../components/CovCamera';
