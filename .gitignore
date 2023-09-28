@@ -16,6 +16,7 @@ classification_model_training/data
 classification_model_training/experiments/*
 
 *.pyc
+*.keystore
 
 # Firebase config
 
