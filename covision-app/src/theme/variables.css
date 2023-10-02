@@ -195,7 +195,7 @@ body {
   */
 
 .md body {
-  --ion-background-color: #ffffff;
+  --ion-background-color: transparent;
   --ion-background-color-rgb: 18, 18, 18;
 
   --ion-text-color: #000000;

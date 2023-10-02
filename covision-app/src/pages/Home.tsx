@@ -1,3 +1,4 @@
+import React from 'react';
 import { IonButton, IonCard, IonCardContent, IonContent, IonPage, IonText } from '@ionic/react';
 import { useEffect, useRef } from 'react';
 import Webcam from 'react-webcam';
@@ -7,6 +8,13 @@ import showWelcomeText from '../api/showWelcomeText';
 import usePipeline from '../api/usePipeline';
 import { useHistory } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import { CameraPreview, CameraPreviewOptions } from '@capacitor-community/camera-preview';
+
+const cameraPreviewOptions: CameraPreviewOptions = {
+  parent: 'cameraPreview',
+  toBack: true,
+};
+CameraPreview.start(cameraPreviewOptions);
 
 showWelcomeText();
 
@@ -104,8 +112,6 @@ const Home: React.FC = () => {
             }}
           ></div>
         )}
-
-        <CovCamera ref={webcamRef} />
       </IonContent>
     </IonPage>
   );
