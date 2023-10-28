@@ -20,9 +20,9 @@ showWelcomeText();
 
 const Home: React.FC = () => {
   const { t } = useTranslation();
-
-  const webcamRef = useRef<Webcam>(null);
-  const { result, detectionScore, area } = usePipeline(webcamRef) ?? {};
+  const cameraPreviewRef = useRef<typeof CameraPreview | null>(null);
+  cameraPreviewRef.current = CameraPreview;
+  const { result, detectionScore, area } = usePipeline(cameraPreviewRef) ?? {};
   const history = useHistory();
 
   useEffect(() => {}, [history, t]);
@@ -56,17 +56,17 @@ const Home: React.FC = () => {
             padding: '10px',
           }}
         >
-          <IonButton style={{ width: '150px', 'font-size': '14px', 'z-index': '1' }} href="/privacyPolicy">
+          <IonButton style={{ width: '150px', fontSize: '14px', zIndex: '1' }} href="/privacyPolicy">
             {t('privacypolicy')}
           </IonButton>
-          <IonButton style={{ width: '150px', 'font-size': '14px', 'z-index': '1' }} href="/imprint">
+          <IonButton style={{ width: '150px', fontSize: '14px', zIndex: '1' }} href="/imprint">
             {t('imprint')}
           </IonButton>
-          <IonButton style={{ width: '150px', 'font-size': '14px', 'z-index': '1' }} href="/info">
+          <IonButton style={{ width: '150px', fontSize: '14px', zIndex: '1' }} href="/info">
             {t('info')}
           </IonButton>
         </div>
-
+        {/* Test result info box */}
         <div
           style={{
             position: 'absolute',
@@ -95,7 +95,7 @@ const Home: React.FC = () => {
             </IonCardContent>
           </IonCard>
         </div>
-
+        {/* Bounding box */}
         {area && (
           <div
             style={{
@@ -113,6 +113,14 @@ const Home: React.FC = () => {
           ></div>
         )}
       </IonContent>
+      <div
+        id="cameraPreview"
+        style={{
+          position: 'fixed',
+          height: '100%',
+          margin: 'auto',
+        }}
+      ></div>
     </IonPage>
   );
 };

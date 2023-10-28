@@ -4,6 +4,7 @@ import { getValidTestArea, TestArea } from './getValidTestArea';
 import runClassifierAnalysis, { TestResult } from './runClassifierAnalysis';
 import runYolov5Analysis from './runYolov5Analysis';
 import { BarcodeScanResult, runBarcodeScan } from './runBarcodeScan';
+import { CameraPreview, CameraPreviewPictureOptions } from '@capacitor-community/camera-preview';
 
 const sleep = (ms: number) =>
   new Promise((resolve) => {
@@ -36,26 +37,30 @@ type AnalysisResult = {
   barcodeResult?: BarcodeScanResult;
 };
 
-const usePipeline = (webcamRef: MutableRefObject<Webcam | null>) => {
+const usePipeline = (cameraPreviewRef: MutableRefObject<typeof CameraPreview | null>) => {
   const [lastResult, setLastResult] = useState<AnalysisResult>({ result: TestResult.Pending, detectionScore: -1 });
   useEvery(
     1000,
     useCallback(async () => {
-      if (!webcamRef.current) return;
-
+      if (!cameraPreviewRef.current) return;
       let result = TestResult.Pending;
       let detectionScore = -1;
       let area;
-
-      const screenshot = webcamRef.current.getScreenshot({ width: 640, height: 640 });
+      const cameraPreviewPictureOptions: CameraPreviewPictureOptions = {
+        width: 640,
+        height: 640,
+      };
+      const screenshotRaw = await cameraPreviewRef.current.capture(cameraPreviewPictureOptions);
+      const screenshot = screenshotRaw.value;
       const barcodeTask = screenshot ? runBarcodeScan(screenshot) : undefined;
 
-      const yolov5Res = await runYolov5Analysis(webcamRef.current);
+      const yolov5Res = await runYolov5Analysis(cameraPreviewRef.current);
       const testArea = getValidTestArea(yolov5Res);
+      console.log(testArea);
 
       if (!testArea.input_tf || !testArea.area) {
         result = TestResult.NotFound;
-      }else{
+      } else {
         result = await runClassifierAnalysis(testArea);
         detectionScore = testArea.score;
         area = testArea.area;
@@ -71,7 +76,7 @@ const usePipeline = (webcamRef: MutableRefObject<Webcam | null>) => {
         area,
         barcodeResult,
       });
-    }, [webcamRef])
+    }, [cameraPreviewRef])
   );
   return lastResult;
 };

@@ -1,30 +1,43 @@
-import * as tf from "@tensorflow/tfjs";
-import { loadGraphModel } from "@tensorflow/tfjs-converter";
-import Webcam from "react-webcam";
-import { Rank } from "@tensorflow/tfjs";
-import warmUp from "./warmUp";
+import * as tf from '@tensorflow/tfjs';
+import { loadGraphModel } from '@tensorflow/tfjs-converter';
+import Webcam from 'react-webcam';
+import { Rank } from '@tensorflow/tfjs';
+import warmUp from './warmUp';
+import { CameraPreview } from '@capacitor-community/camera-preview';
 
-const MODEL_URL = "assets/yolov5s_rapid_test_web_model/model.json";
+const MODEL_URL = 'assets/yolov5s_rapid_test_web_model/model.json';
 const modelPromise = loadGraphModel(MODEL_URL);
 warmUp(modelPromise);
 
 export type Yolov5AnalysisResult = {
-  input_tf?: tf.Tensor<Rank.R4>,
+  input_tf?: tf.Tensor<Rank.R4>;
   boxes?: number[];
   scores?: number[];
   classes?: number[];
   valid_detections?: number;
-}
+};
 
-const runYolov5Analysis = async (webcam: Webcam): Promise<Yolov5AnalysisResult> => {
+const runYolov5Analysis = async (webcam: typeof CameraPreview): Promise<Yolov5AnalysisResult> => {
   const model = await modelPromise;
   const [width, height] = model.inputs[0].shape?.slice(1, 3) ?? [];
-  const canvas = webcam.getCanvas({ width, height });
+  const rawCam = await webcam.capture({ width, height });
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  const img = new Image();
+  img.src = 'data:image/png;base64,' + rawCam.value;
+
+  img.onload = () => {
+    canvas.width = img.width;
+    canvas.height = img.height;
+    ctx?.drawImage(img, 0, 0);
+  };
+
   if (!canvas) throw new Error('could not take screenshot');
 
   const input_tf = tf.tidy(() => tf.browser.fromPixels(canvas).div(255.0).expandDims<tf.Tensor4D>());
-  const [boxes_tf, scores_tf, classes_tf, valid_detections_tf] =
-    (await model.executeAsync(input_tf)) as tf.Tensor<tf.Rank>[];
+  const [boxes_tf, scores_tf, classes_tf, valid_detections_tf] = (await model.executeAsync(
+    input_tf
+  )) as tf.Tensor<tf.Rank>[];
 
   const boxes = Array.from(boxes_tf.dataSync());
   const scores = Array.from(scores_tf.dataSync());
@@ -35,8 +48,8 @@ const runYolov5Analysis = async (webcam: Webcam): Promise<Yolov5AnalysisResult> 
   scores_tf.dispose();
   classes_tf.dispose();
   valid_detections_tf.dispose();
-
-  return { input_tf, boxes, scores, classes, valid_detections }
+  console.log(input_tf, boxes, scores, classes, valid_detections);
+  return { input_tf, boxes, scores, classes, valid_detections };
 };
 
 export default runYolov5Analysis;
