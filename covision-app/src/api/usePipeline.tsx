@@ -56,7 +56,6 @@ const usePipeline = (cameraPreviewRef: MutableRefObject<typeof CameraPreview | n
 
       const yolov5Res = await runYolov5Analysis(cameraPreviewRef.current);
       const testArea = getValidTestArea(yolov5Res);
-      console.log(testArea);
 
       if (!testArea.input_tf || !testArea.area) {
         result = TestResult.NotFound;
@@ -68,13 +67,12 @@ const usePipeline = (cameraPreviewRef: MutableRefObject<typeof CameraPreview | n
 
       yolov5Res.input_tf?.dispose();
 
-      const barcodeResult = await barcodeTask;
+      console.log('sdlfjsdlf');
 
       setLastResult({
         result,
         detectionScore,
         area,
-        barcodeResult,
       });
     }, [cameraPreviewRef])
   );

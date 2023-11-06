@@ -104,7 +104,7 @@ const Home: React.FC = () => {
               borderColor: 'red',
               borderStyle: 'solid',
               borderRadius: 8,
-              zIndex: 10000,
+              zIndex: 200,
               top: area.top * 100 + '%',
               bottom: (1 - area.bottom) * 100 + '%',
               left: area.left * 100 + '%',
@@ -113,12 +113,21 @@ const Home: React.FC = () => {
           ></div>
         )}
       </IonContent>
+
+      <canvas
+        #canvas
+        id="cameraCanvas"
+        style={{ position: 'fixed', visibility: 'visible', zIndex: -100, height: '100%', width: '100%' }}
+      ></canvas>
       <div
         id="cameraPreview"
         style={{
+          display: 'none',
           position: 'fixed',
           height: '100%',
+          width: '100%',
           margin: 'auto',
+          visibility: 'hidden',
         }}
       ></div>
     </IonPage>
