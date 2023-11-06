@@ -46,14 +46,6 @@ const usePipeline = (cameraPreviewRef: MutableRefObject<typeof CameraPreview | n
       let result = TestResult.Pending;
       let detectionScore = -1;
       let area;
-      const cameraPreviewPictureOptions: CameraPreviewPictureOptions = {
-        width: 640,
-        height: 640,
-      };
-      const screenshotRaw = await cameraPreviewRef.current.capture(cameraPreviewPictureOptions);
-      const screenshot = screenshotRaw.value;
-      const barcodeTask = screenshot ? runBarcodeScan(screenshot) : undefined;
-
       const yolov5Res = await runYolov5Analysis(cameraPreviewRef.current);
       const testArea = getValidTestArea(yolov5Res);
 
@@ -66,8 +58,6 @@ const usePipeline = (cameraPreviewRef: MutableRefObject<typeof CameraPreview | n
       }
 
       yolov5Res.input_tf?.dispose();
-
-      console.log('sdlfjsdlf');
 
       setLastResult({
         result,

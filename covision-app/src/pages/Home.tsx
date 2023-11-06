@@ -113,21 +113,13 @@ const Home: React.FC = () => {
           ></div>
         )}
       </IonContent>
-
-      <canvas
-        #canvas
-        id="cameraCanvas"
-        style={{ position: 'fixed', visibility: 'visible', zIndex: -100, height: '100%', width: '100%' }}
-      ></canvas>
       <div
         id="cameraPreview"
         style={{
-          display: 'none',
           position: 'fixed',
           height: '100%',
           width: '100%',
           margin: 'auto',
-          visibility: 'hidden',
         }}
       ></div>
     </IonPage>
